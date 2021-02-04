@@ -5,7 +5,7 @@ import 'package:multiselect_formfield/multiselect_dialog.dart';
 
 class MultiSelectFormField extends FormField<dynamic> {
   final Widget title;
-  final Widget hintWidget;
+  final dynamic hintText;
   final bool required;
   final String errorText;
   final List dataSource;
@@ -34,7 +34,7 @@ class MultiSelectFormField extends FormField<dynamic> {
     dynamic initialValue,
     bool autovalidate = false,
     this.title = const Text('Title'),
-    this.hintWidget = const Text('Tap to select one or more'),
+    this.hintText,
     this.required = false,
     this.errorText = 'Please select one or more options',
     this.leading,
@@ -88,41 +88,42 @@ class MultiSelectFormField extends FormField<dynamic> {
             }
 
             return InkWell(
+              onTap: !enabled
+                  ? null
+                  : () async {
+                      List initialSelected = state.value;
+                      if (initialSelected == null) {
+                        initialSelected = List();
+                      }
 
-              onTap:  !enabled ? null :() async {
-                List initialSelected = state.value;
-                if (initialSelected == null) {
-                  initialSelected = List();
-                }
+                      final items = List<MultiSelectDialogItem<dynamic>>();
+                      dataSource.forEach((item) {
+                        items.add(MultiSelectDialogItem(
+                            item[valueField], item[textField]));
+                      });
 
-                final items = List<MultiSelectDialogItem<dynamic>>();
-                dataSource.forEach((item) {
-                  items.add(
-                      MultiSelectDialogItem(item[valueField], item[textField]));
-                });
+                      List selectedValues = await showDialog<List>(
+                        context: state.context,
+                        builder: (BuildContext context) {
+                          return MultiSelectDialog(
+                            title: title,
+                            okButtonLabel: okButtonLabel,
+                            cancelButtonLabel: cancelButtonLabel,
+                            items: items,
+                            initialSelectedValues: initialSelected,
+                            labelStyle: dialogTextStyle,
+                            dialogShapeBorder: dialogShapeBorder,
+                            checkBoxActiveColor: checkBoxActiveColor,
+                            checkBoxCheckColor: checkBoxCheckColor,
+                          );
+                        },
+                      );
 
-                List selectedValues = await showDialog<List>(
-                  context: state.context,
-                  builder: (BuildContext context) {
-                    return MultiSelectDialog(
-                      title: title,
-                      okButtonLabel: okButtonLabel,
-                      cancelButtonLabel: cancelButtonLabel,
-                      items: items,
-                      initialSelectedValues: initialSelected,
-                      labelStyle: dialogTextStyle,
-                      dialogShapeBorder: dialogShapeBorder,
-                      checkBoxActiveColor: checkBoxActiveColor,
-                      checkBoxCheckColor: checkBoxCheckColor,
-                    );
-                  },
-                );
-
-                if (selectedValues != null) {
-                  state.didChange(selectedValues);
-                  state.save();
-                }
-              },
+                      if (selectedValues != null) {
+                        state.didChange(selectedValues);
+                        state.save();
+                      }
+                    },
               child: InputDecorator(
                 decoration: InputDecoration(
                   filled: true,
@@ -171,7 +172,9 @@ class MultiSelectFormField extends FormField<dynamic> {
                           )
                         : new Container(
                             padding: EdgeInsets.only(top: 4),
-                            child: hintWidget,
+                            child: hintText != null
+                                ? Text('$hintText')
+                                : Container(),
                           )
                   ],
                 ),

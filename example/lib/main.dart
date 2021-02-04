@@ -106,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   valueField: 'value',
                   okButtonLabel: 'OK',
                   cancelButtonLabel: 'CANCEL',
-                  hintWidget: Text('Please choose one or more'),
+                  hintText: null,
                   initialValue: _myActivities,
                   onSaved: (value) {
                     if (value == null) return;
