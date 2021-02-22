@@ -33,7 +33,7 @@ class MultiSelectFormField extends FormField<dynamic> {
     FormFieldValidator<dynamic> validator,
     dynamic initialValue,
     bool autovalidate = false,
-    this.title = const Text('Title'),
+    this.title = const Text('Placeholder'),
     this.hintText,
     this.required = false,
     this.errorText = 'Please select one or more options',
@@ -141,11 +141,9 @@ class MultiSelectFormField extends FormField<dynamic> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          dataSource.length == 0
-                              ? Expanded(
-                                  child: title,
-                                )
-                              : Spacer(),
+                          Expanded(
+                            child: dataSource.length != 0 ? title : Container(),
+                          ),
                           required
                               ? Padding(
                                   padding: EdgeInsets.only(top: 5, right: 5),
