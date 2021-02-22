@@ -142,7 +142,9 @@ class MultiSelectFormField extends FormField<dynamic> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Expanded(
-                            child: dataSource.length != 0 ? title : Container(),
+                            child: state.value != null && state.value.length > 0
+                                ? title
+                                : Container(),
                           ),
                           required
                               ? Padding(
